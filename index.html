@@ -1,978 +1,715 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>For You 🌱 | An Internship Farewell</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rajith Raaj | R&D Telemetry Archive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #0d1117;
+      --bg-panel: #161b22;
+      --border-color: #30363d;
+      --text-main: #c9d1d9;
+      --text-muted: #8b949e;
+      --gh-green-3: #26a641;
+      --gh-green-4: #39d353;
+      --ease-mechanical: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* GitHub Repo Dithered Animated Background */
+    .dithered-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image: url('./assets/dithered-animated.svg');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.6;
+    }
+
+    /* GitHub Repo 3D Contribution SVG */
+    .isometric-container {
+      position: absolute;
+      top: 5%;
+      right: -10%;
+      z-index: 0;
+      opacity: 0.85;
+      width: 700px;
+      pointer-events: none;
+    }
+
+    .isometric-container img {
+      width: 100%;
+      height: auto;
+      filter: drop-shadow(0 20px 30px rgba(0,0,0,0.8));
+    }
+
+    /* Main Container Layout */
+    .main-wrapper {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 800px;
+      padding: 4rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 4rem;
+      animation: boot-up 1s var(--ease-mechanical) forwards;
+    }
+
+    @keyframes boot-up {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* --- HERO SECTION --- */
+    .profile-header {
+      font-family: 'Fira Code', monospace;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      background: rgba(13, 17, 23, 0.7);
+      backdrop-filter: blur(8px);
+      padding: 1.5rem;
+      border-radius: 8px;
+      border: 1px solid rgba(48, 54, 61, 0.5);
+      margin-bottom: 2rem;
+    }
+
+    .github-username {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .github-username::before {
+      content: ">";
+      color: var(--gh-green-4);
+    }
+
+    .profile-bio {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .tech-stack {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .tech-badge {
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-panel);
+      color: var(--text-muted);
+    }
+
+    /* Terminal Window / Interactive Note */
+    .terminal-window {
+      width: 100%;
+      background-color: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+    }
+
+    .terminal-header {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      background-color: #010409;
+      border-bottom: 1px solid var(--border-color);
+      gap: 8px;
+    }
+
+    .mac-btn { width: 12px; height: 12px; border-radius: 50%; }
+    .mac-close { background-color: #ff5f56; }
+    .mac-min { background-color: #ffbd2e; }
+    .mac-max { background-color: #27c93f; }
+
+    .terminal-title {
+      margin-left: auto;
+      margin-right: auto;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .terminal-body {
+      padding: 1.5rem;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.875rem;
+      line-height: 1.6;
+    }
+
+    .cmd-line {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      color: var(--gh-green-4);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .cmd-line:hover .cmd-text { text-decoration: underline; }
+    .cmd-text { color: var(--text-main); }
     
-    <!-- 
-      ======================================================================
-      PROJECT: ALOE RAUHII CINEMATIC FAREWELL
-      AUTHOR: Rajith
-      DESCRIPTION: A single-file, zero-dependency interactive cinematic 
-                   experience for a physical plant gifting event.
-      ======================================================================
-    -->
+    .blinking-cursor {
+      display: inline-block;
+      width: 8px;
+      height: 15px;
+      background-color: var(--text-main);
+      animation: blink 1s step-end infinite;
+      vertical-align: middle;
+    }
 
-    <style>
-        /* =====================================================================
-           CSS CUSTOM PROPERTIES & VARIABLES
-           ===================================================================== */
-        :root {
-            /* Core Colors */
-            --bg-base: #030504;
-            --bg-surface: #0a110c;
-            --bg-surface-light: #131f16;
-            
-            /* Typography Colors */
-            --text-primary: #e2e8f0;
-            --text-secondary: #94a3b8;
-            --text-tertiary: #64748b;
-            
-            /* Brand / Accent Colors */
-            --accent-green-light: #86efac;
-            --accent-green-main: #4ade80;
-            --accent-green-dark: #22c55e;
-            --accent-glow: rgba(74, 222, 128, 0.15);
-            --accent-glow-strong: rgba(74, 222, 128, 0.4);
-            
-            /* Typography Families */
-            --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            --font-serif: 'Georgia', 'Times New Roman', Times, serif;
-            --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-            
-            /* Animation Timings */
-            --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
-            --ease-in-out-sine: cubic-bezier(0.445, 0.05, 0.55, 0.95);
-            --transition-slow: 2s var(--ease-in-out-sine);
-            --transition-medium: 0.8s var(--ease-out-expo);
-            --transition-fast: 0.3s ease;
-            
-            /* Spacing Metrics */
-            --spacing-xs: 0.5rem;
-            --spacing-sm: 1rem;
-            --spacing-md: 2rem;
-            --spacing-lg: 4rem;
-            --spacing-xl: 8rem;
-            
-            /* Z-Index Layers */
-            --z-canvas: 0;
-            --z-background: 10;
-            --z-content: 20;
-            --z-overlay: 30;
-            --z-ui: 40;
-        }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-        /* =====================================================================
-           GLOBAL RESET & BASE STYLES
-           ===================================================================== */
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    .decrypted-content {
+      display: none;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px dashed var(--border-color);
+      animation: render-output 0.6s var(--ease-mechanical) forwards;
+    }
 
-        html {
-            font-size: 16px;
-            scroll-behavior: smooth;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
+    @keyframes render-output {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-        body {
-            background-color: var(--bg-base);
-            color: var(--text-primary);
-            font-family: var(--font-sans);
-            overflow-x: hidden;
-            width: 100vw;
-            height: 100vh;
-            /* Prevents scroll during the intro sequence */
-            overflow-y: hidden;
-            position: relative;
-        }
+    .scan-image {
+      width: 100%;
+      height: 180px;
+      background: #000 url('./assets/IMG_2290.jpeg') center/cover;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      margin-bottom: 1.5rem;
+      position: relative;
+      filter: grayscale(100%) contrast(1.2);
+      transition: filter 0.5s ease;
+    }
 
-        ::selection {
-            background-color: var(--accent-green-dark);
-            color: var(--bg-base);
-        }
+    .scan-image:hover {
+      filter: grayscale(0%) contrast(1);
+    }
 
-        /* =====================================================================
-           CANVAS & BACKGROUND EFFECTS
-           ===================================================================== */
-        #particle-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: var(--z-canvas);
-            pointer-events: none; /* Let clicks pass through to UI */
-            opacity: 0.6;
-            transition: opacity var(--transition-slow);
-        }
+    .scan-image::after {
+      content: "[ IMG_DATA_DECODED ]";
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background: var(--bg-dark);
+      padding: 2px 6px;
+      font-size: 10px;
+      color: var(--gh-green-4);
+      border: 1px solid var(--gh-green-4);
+    }
 
-        .ambient-gradient {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 50% 50%, rgba(20, 35, 25, 0.4) 0%, var(--bg-base) 80%);
-            z-index: var(--z-background);
-            pointer-events: none;
-        }
+    .farewell-text {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
 
-        /* =====================================================================
-           AUDIO CONTROLS UI
-           ===================================================================== */
-        .audio-toggle-btn {
-            position: fixed;
-            bottom: var(--spacing-md);
-            right: var(--spacing-md);
-            z-index: var(--z-ui);
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-secondary);
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            transition: all var(--transition-fast);
-            opacity: 0;
-            transform: translateY(20px);
-            animation: floatIn 2s ease forwards 5s; /* Appears after 5 seconds */
-        }
+    .signature {
+      margin-top: 1rem;
+      color: var(--gh-green-4);
+      font-family: 'Fira Code', monospace;
+    }
 
-        .audio-toggle-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--accent-green-main);
-            border-color: var(--accent-green-dark);
-            box-shadow: 0 0 15px var(--accent-glow);
-        }
+    .terminal-active .decrypted-content { display: block; }
+    .terminal-active .blinking-cursor { display: none; }
 
-        .audio-toggle-btn svg {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-            transition: fill var(--transition-fast);
-        }
+    /* --- COMMON SECTION STYLES --- */
+    .section-title {
+      font-family: 'Fira Code', monospace;
+      font-size: 1.25rem;
+      color: var(--text-main);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-        .audio-toggle-btn.playing {
-            color: var(--accent-green-light);
-            border-color: var(--accent-green-main);
-            box-shadow: 0 0 20px var(--accent-glow-strong);
-            animation: pulseGlow 4s infinite alternate;
-        }
+    .section-title::before {
+      content: "";
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      background-color: var(--gh-green-3);
+      border-radius: 2px;
+    }
 
-        /* =====================================================================
-           CINEMATIC SEQUENCER LAYOUT
-           ===================================================================== */
-        #sequence-container {
-            position: relative;
-            z-index: var(--z-content);
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
+    /* --- BENTO GRID SECTION --- */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 1rem;
+    }
 
-        .sequence-step {
-            position: absolute;
-            width: 90%;
-            max-width: 800px;
-            text-align: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 2.5s var(--ease-in-out-sine), 
-                        transform 2.5s var(--ease-out-expo);
-            transform: translateY(20px);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
+    @media (min-width: 768px) {
+      .bento-grid {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: auto auto;
+      }
+      .card-impact {
+        grid-column: span 3;
+      }
+    }
 
-        .sequence-step.active {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
+    .bento-card {
+      background-color: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      transition: border-color 0.3s var(--ease-mechanical), transform 0.3s var(--ease-mechanical);
+    }
 
-        /* =====================================================================
-           TYPOGRAPHY & TEXT STYLES
-           ===================================================================== */
-        h1, h2, h3, h4, h5, h6 {
-            font-weight: 300;
-            line-height: 1.4;
-            margin-bottom: var(--spacing-sm);
-        }
+    .bento-card:hover {
+      border-color: var(--text-muted);
+      transform: translateY(-2px);
+    }
 
-        .text-step h2 {
-            font-family: var(--font-serif);
-            font-size: clamp(1.5rem, 4vw, 2.5rem);
-            color: var(--text-primary);
-            letter-spacing: 0.5px;
-            text-shadow: 0 4px 12px rgba(0,0,0,0.5);
-        }
+    .bento-header {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.5rem;
+    }
 
-        .text-step p {
-            font-size: clamp(1rem, 2.5vw, 1.25rem);
-            line-height: 2;
-            color: var(--text-secondary);
-            margin-bottom: var(--spacing-xs);
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
+    .stat-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
 
-        .text-step .highlight {
-            color: var(--text-primary);
-            font-weight: 500;
-            font-size: clamp(1.2rem, 3vw, 1.5rem);
-            margin-top: var(--spacing-md);
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-        }
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 600;
+      color: var(--gh-green-4);
+      font-family: 'Fira Code', monospace;
+      line-height: 1;
+    }
 
-        .text-step .signature {
-            margin-top: var(--spacing-lg);
-            font-style: italic;
-            color: var(--accent-green-main);
-            font-family: var(--font-serif);
-            font-size: 1.2rem;
-            opacity: 0.8;
-        }
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
 
-        .final-quote {
-            font-family: var(--font-serif);
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            font-weight: normal;
-            line-height: 1.3;
-            margin-bottom: var(--spacing-xl);
-            color: var(--text-primary);
-            text-shadow: 0 0 30px rgba(255,255,255,0.1);
-        }
+    .tech-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
 
-        /* =====================================================================
-           SVG PLANT DRAWING ANIMATION
-           ===================================================================== */
-        .glowing-aloe-container {
-            width: 200px;
-            height: 200px;
-            margin: 0 auto var(--spacing-md);
-            position: relative;
-            filter: drop-shadow(0 0 25px var(--accent-glow));
-        }
+    .tech-list li {
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-        .aloe-svg {
-            width: 100%;
-            height: 100%;
-            overflow: visible;
-        }
+    .tech-list li::before {
+      content: ">>";
+      color: var(--gh-green-3);
+      font-family: 'Fira Code', monospace;
+    }
 
-        .aloe-leaf {
-            fill: none;
-            stroke: var(--accent-green-main);
-            stroke-width: 1.5;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            /* Prepare for drawing animation */
-            stroke-dasharray: 1000;
-            stroke-dashoffset: 1000;
-        }
+    .impact-text {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--text-main);
+      font-weight: 300;
+    }
 
-        /* Unique animation delays for each leaf to simulate organic growth */
-        .active .draw-anim-1 { animation: drawLeaf 3s var(--ease-in-out-sine) forwards 0.2s; }
-        .active .draw-anim-2 { animation: drawLeaf 3s var(--ease-in-out-sine) forwards 0.6s; }
-        .active .draw-anim-3 { animation: drawLeaf 3s var(--ease-in-out-sine) forwards 1.0s; }
-        .active .draw-anim-4 { animation: drawLeaf 3s var(--ease-in-out-sine) forwards 1.4s; }
-        .active .draw-anim-5 { animation: drawLeaf 3s var(--ease-in-out-sine) forwards 1.8s; }
-        .active .draw-anim-6 { animation: drawLeaf 3s var(--ease-in-out-sine) forwards 2.2s; }
+    /* --- HANDOVER VAULT (ACCORDION) --- */
+    .accordion {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
 
-        @keyframes drawLeaf {
-            0% { stroke-dashoffset: 1000; opacity: 0; }
-            10% { opacity: 1; }
-            100% { stroke-dashoffset: 0; opacity: 1; fill: rgba(74, 222, 128, 0.05); }
-        }
+    details {
+      background-color: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      overflow: hidden;
+    }
 
-        /* =====================================================================
-           DASHBOARD & CARE GUIDE (FINAL STEP)
-           ===================================================================== */
-        .dashboard-step {
-            /* Override position for the final step to allow scrolling */
-            position: relative;
-            height: auto;
-            min-height: 100vh;
-            padding: var(--spacing-xl) 0;
-            justify-content: flex-start;
-        }
+    summary {
+      padding: 1rem 1.5rem;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      user-select: none;
+      transition: background-color 0.2s ease;
+    }
 
-        .care-guide-container {
-            background: rgba(10, 17, 12, 0.6);
-            border: 1px solid rgba(74, 222, 128, 0.15);
-            border-radius: 16px;
-            padding: var(--spacing-lg);
-            width: 100%;
-            max-width: 800px;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.05);
-            transform: translateY(30px);
-            opacity: 0;
-            transition: all 1.5s var(--ease-out-expo);
-        }
+    summary:hover {
+      background-color: rgba(48, 54, 61, 0.3);
+      color: var(--gh-green-4);
+    }
 
-        .active .care-guide-container {
-            transform: translateY(0);
-            opacity: 1;
-            transition-delay: 1s; /* Wait for quote to appear */
-        }
+    summary::before {
+      content: "[+]";
+      color: var(--text-muted);
+    }
 
-        .care-header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: var(--spacing-lg);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            padding-bottom: var(--spacing-md);
-        }
+    details[open] summary::before {
+      content: "[-]";
+      color: var(--gh-green-4);
+    }
 
-        .care-header h3 {
-            color: var(--accent-green-main);
-            font-size: 1.5rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin: 0;
-        }
+    /* Hide default marker in Safari/Chrome */
+    summary::-webkit-details-marker {
+      display: none;
+    }
 
-        .care-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: var(--spacing-md);
-        }
+    .accordion-content {
+      padding: 0 1.5rem 1.5rem 1.5rem;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+      border-top: 1px dashed var(--border-color);
+      margin-top: 0.5rem;
+      padding-top: 1rem;
+    }
 
-        .care-card {
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 12px;
-            padding: var(--spacing-md);
-            text-align: left;
-            transition: transform var(--transition-fast), background var(--transition-fast);
-            border: 1px solid transparent;
-        }
+    /* --- EXECUTIVE FOOTER --- */
+    .executive-footer {
+      border-top: 1px solid var(--border-color);
+      padding-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
 
-        .care-card:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.04);
-            border-color: rgba(74, 222, 128, 0.2);
-        }
+    @media (min-width: 600px) {
+      .executive-footer {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
 
-        .care-icon {
-            font-size: 2rem;
-            margin-bottom: var(--spacing-sm);
-            display: inline-block;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
-        }
+    .footer-profile {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
 
-        .care-card h4 {
-            color: var(--text-primary);
-            font-size: 1.1rem;
-            margin-bottom: var(--spacing-xs);
-            font-weight: 500;
-        }
+    .footer-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background-color: var(--bg-panel);
+      border: 2px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Fira Code', monospace;
+      color: var(--gh-green-4);
+      font-weight: bold;
+    }
 
-        .care-card p {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: var(--text-secondary);
-            margin: 0;
-        }
+    .footer-name {
+      font-weight: 600;
+      color: var(--text-main);
+    }
 
-        /* =====================================================================
-           STAGGERED FADE-IN UTILITIES
-           ===================================================================== */
-        .fade-delay-1 { opacity: 0; transition: opacity 2s ease 0.5s; }
-        .fade-delay-2 { opacity: 0; transition: opacity 2s ease 2.5s; }
-        .fade-delay-3 { opacity: 0; transition: opacity 2s ease 4.5s; }
-        .fade-delay-4 { opacity: 0; transition: opacity 2s ease 6.5s; }
-        .fade-delay-5 { opacity: 0; transition: opacity 2s ease 8.5s; }
-        .fade-delay-6 { opacity: 0; transition: opacity 2s ease 10.5s; }
-        .fade-delay-7 { opacity: 0; transition: opacity 2s ease 12.5s; }
+    .footer-role {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-family: 'Fira Code', monospace;
+    }
 
-        .active .fade-delay-1,
-        .active .fade-delay-2,
-        .active .fade-delay-3,
-        .active .fade-delay-4,
-        .active .fade-delay-5,
-        .active .fade-delay-6,
-        .active .fade-delay-7 {
-            opacity: 1;
-        }
+    .footer-actions {
+      display: flex;
+      gap: 1rem;
+    }
 
-        /* =====================================================================
-           KEYFRAME ANIMATIONS
-           ===================================================================== */
-        @keyframes floatIn {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
+    .action-btn {
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.8rem;
+      transition: all 0.3s var(--ease-mechanical);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      background-color: var(--bg-panel);
+    }
 
-        @keyframes pulseGlow {
-            0% { box-shadow: 0 0 10px rgba(74, 222, 128, 0.2); }
-            100% { box-shadow: 0 0 25px rgba(74, 222, 128, 0.6); }
-        }
+    .action-btn:hover {
+      border-color: var(--gh-green-4);
+      color: var(--gh-green-4);
+      transform: translateY(-2px);
+    }
 
-        @keyframes subtleDrift {
-            0% { transform: translate(0px, 0px) rotate(0deg); }
-            50% { transform: translate(5px, 10px) rotate(1deg); }
-            100% { transform: translate(0px, 0px) rotate(0deg); }
-        }
+    .action-btn.primary {
+      background-color: var(--gh-green-2);
+      border-color: var(--gh-green-3);
+      color: #fff;
+    }
 
-        /* Apply subtle continuous drift to the plant svg once drawn */
-        .active .aloe-svg {
-            animation: subtleDrift 10s ease-in-out infinite alternate 4s;
-        }
+    .action-btn.primary:hover {
+      background-color: var(--gh-green-3);
+      border-color: var(--gh-green-4);
+    }
 
-        /* =====================================================================
-           MEDIA QUERIES (RESPONSIVENESS)
-           ===================================================================== */
-        @media (max-width: 768px) {
-            :root {
-                --spacing-lg: 2.5rem;
-                --spacing-xl: 4rem;
-            }
-            .glowing-aloe-container {
-                width: 150px;
-                height: 150px;
-            }
-            .care-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-                scroll-behavior: auto !important;
-            }
-            .aloe-leaf {
-                stroke-dashoffset: 0;
-                opacity: 1;
-                fill: rgba(74, 222, 128, 0.05);
-            }
-        }
-    </style>
+  </style>
 </head>
 <body>
 
-    <!-- =======================================================================
-         BACKGROUND ELEMENTS
-         ======================================================================= -->
-    <div class="ambient-gradient"></div>
-    <canvas id="particle-canvas"></canvas>
+  <!-- Repo Assets -->
+  <div class="dithered-bg"></div>
+  <div class="isometric-container">
+    <!-- Replace this with your actual SVG if available -->
+    <img src="./assets/profile-night-green.svg" alt="3D GitHub Contributions" onerror="this.style.display='none'"/>
+  </div>
 
-    <!-- =======================================================================
-         AUDIO CONTROLS
-         ======================================================================= -->
-    <button id="audio-toggle" class="audio-toggle-btn" aria-label="Toggle ambient sound">
-        <!-- Play Icon (SVG) -->
-        <svg viewBox="0 0 24 24" class="icon-play">
-            <path d="M8 5v14l11-7z"/>
-        </svg>
-    </button>
+  <div class="main-wrapper">
+    
+    <!-- 1. HERO SECTION -->
+    <section>
+      <div class="profile-header">
+        <h1 class="github-username">Rajith Raaj</h1>
+        <p class="profile-bio">
+          AI/ML Engineering Student & Full-Stack Developer.<br>
+          Archiving AI telemetry, Next.js components, and Supabase pipelines from my two-month R&D internship at Ashok Leyland.
+        </p>
+        <div class="tech-stack">
+          <span class="tech-badge">Python</span>
+          <span class="tech-badge">Next.js</span>
+          <span class="tech-badge">Vercel</span>
+          <span class="tech-badge">Supabase</span>
+          <span class="tech-badge">AI/ML</span>
+        </div>
+      </div>
 
-    <!-- =======================================================================
-         CINEMATIC SEQUENCE CONTAINER
-         ======================================================================= -->
-    <div id="sequence-container">
+      <div class="terminal-window" id="terminal">
+        <div class="terminal-header">
+          <div class="mac-btn mac-close"></div>
+          <div class="mac-btn mac-min"></div>
+          <div class="mac-btn mac-max"></div>
+          <div class="terminal-title">bash - r&d_archive</div>
+        </div>
         
-        <!-- ==========================================
-             STEP 0: THE PLANT REVEAL
-             ========================================== -->
-        <div id="step-plant" class="sequence-step">
-            <div class="glowing-aloe-container">
-                <!-- Highly detailed SVG representation of an Aloe plant -->
-                <svg viewBox="0 0 200 200" class="aloe-svg" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Base Pot/Shadow -->
-                    <ellipse cx="100" cy="180" rx="40" ry="10" fill="rgba(0,0,0,0.5)" filter="blur(4px)"/>
-                    
-                    <!-- Center/Back Leaves -->
-                    <path d="M100 170 Q105 100 100 30 Q90 90 100 170" class="aloe-leaf draw-anim-1"/>
-                    
-                    <!-- Mid-layer Leaves -->
-                    <path d="M100 170 Q130 110 150 50 Q110 110 100 170" class="aloe-leaf draw-anim-2"/>
-                    <path d="M100 170 Q70 110 50 50 Q90 110 100 170" class="aloe-leaf draw-anim-3"/>
-                    
-                    <!-- Foreground Leaves (Curving out and down) -->
-                    <path d="M100 170 Q150 140 180 100 Q130 150 100 170" class="aloe-leaf draw-anim-4"/>
-                    <path d="M100 170 Q50 140 20 100 Q70 150 100 170" class="aloe-leaf draw-anim-5"/>
-                    
-                    <!-- Small emerging central leaf -->
-                    <path d="M100 170 Q110 140 105 100 Q95 140 100 170" class="aloe-leaf draw-anim-6"/>
-                </svg>
+        <div class="terminal-body">
+          <div class="cmd-line" id="executeCmd" role="button" tabindex="0">
+            <span>~/ashok-leyland $</span>
+            <span class="cmd-text">./decrypt_farewell_note.sh</span>
+            <span class="blinking-cursor"></span>
+          </div>
+
+          <div class="decrypted-content" id="output">
+            <div class="scan-image"></div>
+            <div class="farewell-text">
+              <p>To the R&D Engineering Team,</p>
+              <p>These past two months have been a masterclass in systems architecture and execution. Building at the intersection of heavy engineering and machine learning challenged me to elevate the structural integrity of every pipeline I touched.</p>
+              <p>Thank you for the rigorous code reviews, the whiteboard sessions, and for giving a student the runway to tackle enterprise-grade telemetry problems. The future of mobility is being built right here.</p>
+              <span class="signature">-- Rajith Raaj <br/> [ Process completed with exit code 0 ]</span>
             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. BENTO GRID SECTION -->
+    <section>
+      <h2 class="section-title">Telemetry.Log // R&D Overview</h2>
+      <div class="bento-grid">
+        
+        <div class="bento-card">
+          <div class="bento-header">Execution_Metrics</div>
+          <div class="stat-group">
+            <span class="stat-number counter" data-target="480">0</span>
+            <span class="stat-label">Hours Logged</span>
+          </div>
+          <div class="stat-group">
+            <span class="stat-number counter" data-target="124">0</span>
+            <span class="stat-label">Commits Pushed</span>
+          </div>
         </div>
 
-        <!-- ==========================================
-             STEP 1: FIRST REALIZATION
-             ========================================== -->
-        <div id="step-1" class="sequence-step text-step">
-            <h2>If you're seeing this, you just scanned the little plant I gave you.</h2>
+        <div class="bento-card">
+          <div class="bento-header">Core_Dependencies</div>
+          <ul class="tech-list">
+            <li>Python / ML Models</li>
+            <li>Next.js App Router</li>
+            <li>Supabase Auth/DB</li>
+            <li>Vercel Edge Network</li>
+            <li>Tailwind CSS</li>
+          </ul>
         </div>
 
-        <!-- ==========================================
-             STEP 2: THE SETUP
-             ========================================== -->
-        <div id="step-2" class="sequence-step text-step">
-            <h2>Before you leave this page, I want you to know...</h2>
+        <div class="bento-card card-impact">
+          <div class="bento-header">Business_Impact_Analysis</div>
+          <p class="impact-text">
+            Engineered and deployed a full-stack telemetry monitoring solution for the R&D division. By bridging hardware data outputs with a modern, low-latency web interface, the system reduced data-retrieval friction for senior engineers and provided real-time predictive insights into component lifecycle health. Built with strict adherence to enterprise security and zero technical debt.
+          </p>
         </div>
 
-        <!-- ==========================================
-             STEP 3: THE CORE FAREWELL MESSAGE
-             ========================================== -->
-        <div id="step-3" class="sequence-step text-step">
-            <p class="fade-delay-1">This plant is small.</p>
-            <p class="fade-delay-2">But I hope it reminds you of something bigger.</p>
-            <br>
-            <p class="fade-delay-3">Thank you for being part of my internship journey.</p>
-            <br>
-            <p class="fade-delay-4">Some people become memories because of big moments.</p>
-            <p class="fade-delay-5">Others become memories simply because they were there.</p>
-            <p class="fade-delay-6 highlight">I'm glad you were there.</p>
-            <p class="fade-delay-7 signature">— Rajith</p>
+      </div>
+    </section>
+
+    <!-- 3. HANDOVER VAULT SECTION -->
+    <section>
+      <h2 class="section-title">Directory // Handover_Vault</h2>
+      <div class="accordion">
+        
+        <details>
+          <summary>Project_Repositories.tar.gz</summary>
+          <div class="accordion-content">
+            <p>Links to mirrored private repos for Zen-Auto telemetry dashboard and Supabase schemas. All code is strictly documented with Python docstrings and React prop-types for seamless handover.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>System_Architecture.pdf</summary>
+          <div class="accordion-content">
+            <p>High-level system design outlining the data flow from physical sensors -> Edge functions -> DB -> Next.js Frontend. Includes fallbacks for network latency.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Next_Steps_&_Maintenance.md</summary>
+          <div class="accordion-content">
+            <p>Action items for the next intern/engineer, including scaling the edge functions, optimizing the ML prediction model for battery life, and adding advanced filtering to the UI.</p>
+          </div>
+        </details>
+
+      </div>
+    </section>
+
+    <!-- 4. EXECUTIVE FOOTER -->
+    <footer class="executive-footer">
+      <div class="footer-profile">
+        <div class="footer-avatar">RR</div>
+        <div>
+          <div class="footer-name">Rajith Raaj</div>
+          <div class="footer-role">AI/ML Engineer</div>
         </div>
+      </div>
+      <div class="footer-actions">
+        <a href="#" class="action-btn">LinkedIn</a>
+        <a href="#" class="action-btn primary">Download_Resume.pdf</a>
+      </div>
+    </footer>
 
-        <!-- ==========================================
-             STEP 4: FINAL DASHBOARD / CARE GUIDE
-             ========================================== -->
-        <div id="step-final" class="sequence-step dashboard-step">
-            <h1 class="final-quote fade-delay-1">The internship ended.<br>The memories don't have to.</h1>
-            
-            <div class="care-guide-container fade-delay-3">
-                <div class="care-header">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-green-main);">
-                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                    </svg>
-                    <h3>Aloe Rauhii Care</h3>
-                </div>
-                
-                <div class="care-grid">
-                    <!-- Light Care -->
-                    <div class="care-card">
-                        <span class="care-icon">☀️</span>
-                        <h4>Sunlight</h4>
-                        <p>Prefers bright, indirect light. A windowsill with morning sun is the perfect spot. Avoid harsh, direct afternoon sun which can scorch its delicate leaves.</p>
-                    </div>
-                    
-                    <!-- Water Care -->
-                    <div class="care-card">
-                        <span class="care-icon">💧</span>
-                        <h4>Watering</h4>
-                        <p>Allow the soil to dry completely out between waterings. When you do water, soak it thoroughly until water runs out the bottom. Less is more.</p>
-                    </div>
-                    
-                    <!-- Soil/Potting Care -->
-                    <div class="care-card">
-                        <span class="care-icon">🪴</span>
-                        <h4>Soil & Potting</h4>
-                        <p>Needs excellent drainage. A cactus or succulent soil mix is ideal. Only repot when it outgrows its current container, usually every 2-3 years.</p>
-                    </div>
-                    
-                    <!-- Temperature Care -->
-                    <div class="care-card">
-                        <span class="care-icon">🌡️</span>
-                        <h4>Environment</h4>
-                        <p>Thrives in standard indoor room temperatures (65°F - 80°F). Keep away from cold drafts or AC vents. It does not require high humidity.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+  </div>
 
-    <!-- =======================================================================
-         JAVASCRIPT APPLICATION LOGIC
-         ======================================================================= -->
-    <script>
-        /**
-         * =====================================================================
-         * MODULE 1: UTILITIES
-         * =====================================================================
-         */
-        const Utils = {
-            /**
-             * Promisified setTimeout for async/await sequencing
-             * @param {number} ms - Milliseconds to sleep
-             * @returns {Promise<void>}
-             */
-            sleep: (ms) => new Promise(resolve => setTimeout(resolve, ms)),
-
-            /**
-             * Generates a random number between min and max
-             */
-            randomRange: (min, max) => Math.random() * (max - min) + min,
-
-            /**
-             * Maps a number from one range to another
-             */
-            mapRange: (value, inMin, inMax, outMin, outMax) => {
-                return (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
-            }
-        };
-
-        /**
-         * =====================================================================
-         * MODULE 2: WEB AUDIO API SYNTHESIZER (GENERATIVE AMBIENT)
-         * Creates a soft, cinematic background drone without needing MP3 files.
-         * =====================================================================
-         */
-        class AudioEnvironment {
-            constructor() {
-                this.ctx = null;
-                this.masterGain = null;
-                this.oscillators = [];
-                this.isPlaying = false;
-                this.btn = document.getElementById('audio-toggle');
-                
-                this.bindEvents();
-            }
-
-            bindEvents() {
-                this.btn.addEventListener('click', () => this.toggleAudio());
-            }
-
-            async initAudio() {
-                if (this.ctx) return;
-                
-                // Initialize Audio Context
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                this.ctx = new AudioContext();
-                
-                // Master Volume
-                this.masterGain = this.ctx.createGain();
-                this.masterGain.connect(this.ctx.destination);
-                this.masterGain.gain.value = 0; // Start muted
-
-                // Create a soft chord (Fmaj7/C vibe)
-                const frequencies = [130.81, 174.61, 220.00, 329.63]; // C3, F3, A3, E4
-                
-                frequencies.forEach(freq => {
-                    // Oscillator
-                    const osc = this.ctx.createOscillator();
-                    osc.type = 'sine';
-                    osc.frequency.value = freq;
-                    
-                    // Individual LFO for slow volume pulsing
-                    const lfo = this.ctx.createOscillator();
-                    lfo.type = 'sine';
-                    lfo.frequency.value = Utils.randomRange(0.05, 0.15); // Very slow pulse
-                    
-                    const lfoGain = this.ctx.createGain();
-                    lfoGain.gain.value = 0.5;
-                    
-                    // Route LFO to Gain
-                    lfo.connect(lfoGain.gain);
-                    
-                    // Main Gain for this oscillator
-                    const oscGain = this.ctx.createGain();
-                    oscGain.gain.value = 0.2; // Low volume per note
-                    
-                    osc.connect(oscGain);
-                    oscGain.connect(this.masterGain);
-                    
-                    // Start nodes
-                    osc.start();
-                    lfo.start();
-                    
-                    this.oscillators.push({ osc, lfo, oscGain });
-                });
-            }
-
-            async toggleAudio() {
-                if (!this.ctx) {
-                    await this.initAudio();
-                }
-
-                // Resume context if suspended (browser policy)
-                if (this.ctx.state === 'suspended') {
-                    await this.ctx.resume();
-                }
-
-                if (this.isPlaying) {
-                    // Fade out
-                    this.masterGain.gain.setTargetAtTime(0, this.ctx.currentTime, 1);
-                    this.btn.classList.remove('playing');
-                    this.btn.innerHTML = '<svg viewBox="0 0 24 24" class="icon-play"><path d="M8 5v14l11-7z"/></svg>';
-                } else {
-                    // Fade in
-                    this.masterGain.gain.setTargetAtTime(0.5, this.ctx.currentTime, 2);
-                    this.btn.classList.add('playing');
-                    // Pause Icon
-                    this.btn.innerHTML = '<svg viewBox="0 0 24 24" class="icon-pause"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
-                }
-                
-                this.isPlaying = !this.isPlaying;
-            }
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      
+      // 1. Terminal Execution Logic
+      const executeBtn = document.getElementById("executeCmd");
+      const terminal = document.getElementById("terminal");
+      
+      executeBtn.addEventListener("click", () => {
+        const isActive = terminal.classList.contains("terminal-active");
+        
+        if (!isActive) {
+          const cmdText = executeBtn.querySelector(".cmd-text");
+          const originalText = cmdText.innerText;
+          cmdText.innerText = "Executing...";
+          
+          setTimeout(() => {
+            cmdText.innerText = originalText;
+            terminal.classList.add("terminal-active");
+          }, 400);
+        } else {
+          terminal.classList.remove("terminal-active");
         }
+      });
 
-        /**
-         * =====================================================================
-         * MODULE 3: INTERACTIVE PARTICLE SYSTEM (CONSTELLATION EFFECT)
-         * Renders a highly optimized, interactive network of nodes.
-         * =====================================================================
-         */
-        class ParticleNode {
-            constructor(canvasWidth, canvasHeight) {
-                this.x = Math.random() * canvasWidth;
-                this.y = Math.random() * canvasHeight;
-                // Slower movement for cinematic feel
-                this.vx = Utils.randomRange(-0.2, 0.2);
-                this.vy = Utils.randomRange(-0.2, 0.2);
-                this.radius = Utils.randomRange(0.5, 2);
-                this.baseAlpha = Utils.randomRange(0.1, 0.5);
-            }
-
-            update(canvasWidth, canvasHeight, mouseX, mouseY) {
-                // Move
-                this.x += this.vx;
-                this.y += this.vy;
-
-                // Screen Wrap (Continuous flow instead of bouncing)
-                if (this.x < 0) this.x = canvasWidth;
-                if (this.x > canvasWidth) this.x = 0;
-                if (this.y < 0) this.y = canvasHeight;
-                if (this.y > canvasHeight) this.y = 0;
-
-                // Mouse interaction (gentle repulsion)
-                if (mouseX !== null && mouseY !== null) {
-                    const dx = mouseX - this.x;
-                    const dy = mouseY - this.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    const maxDist = 150;
-
-                    if (distance < maxDist) {
-                        const force = (maxDist - distance) / maxDist;
-                        this.x -= (dx / distance) * force * 1.5;
-                        this.y -= (dy / distance) * force * 1.5;
-                    }
-                }
-            }
-
-            draw(ctx) {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(74, 222, 128, ${this.baseAlpha})`;
-                ctx.fill();
-            }
+      executeBtn.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          executeBtn.click();
         }
+      });
 
-        class ParticleNetwork {
-            constructor() {
-                this.canvas = document.getElementById('particle-canvas');
-                this.ctx = this.canvas.getContext('2d', { alpha: false }); // Optimize performance
-                this.particles = [];
-                this.mouse = { x: null, y: null };
-                this.connectionDistance = 120;
-                
-                this.init();
-                this.bindEvents();
-                this.animate();
-            }
+      // 2. Number Counter Animation for Bento Grid
+      const counters = document.querySelectorAll('.counter');
+      const speed = 40; // Lower is faster
 
-            init() {
-                this.resize();
-                this.createParticles();
-            }
+      const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.5
+      };
 
-            resize() {
-                this.width = window.innerWidth;
-                this.height = window.innerHeight;
-                // Handle high DPI displays for crisp rendering
-                const dpr = window.devicePixelRatio || 1;
-                this.canvas.width = this.width * dpr;
-                this.canvas.height = this.height * dpr;
-                this.ctx.scale(dpr, dpr);
-            }
-
-            createParticles() {
-                this.particles = [];
-                // Density based on screen area, capped for performance
-                const area = this.width * this.height;
-                let numParticles = Math.floor(area / 15000);
-                numParticles = Math.min(numParticles, 150); // Hard cap
-                
-                for (let i = 0; i < numParticles; i++) {
-                    this.particles.push(new ParticleNode(this.width, this.height));
-                }
-            }
-
-            bindEvents() {
-                window.addEventListener('resize', () => {
-                    this.resize();
-                    this.createParticles();
-                });
-
-                window.addEventListener('mousemove', (e) => {
-                    this.mouse.x = e.clientX;
-                    this.mouse.y = e.clientY;
-                });
-
-                // Touch support for mobile interaction
-                window.addEventListener('touchmove', (e) => {
-                    if(e.touches.length > 0) {
-                        this.mouse.x = e.touches[0].clientX;
-                        this.mouse.y = e.touches[0].clientY;
-                    }
-                }, { passive: true });
-
-                window.addEventListener('mouseout', () => {
-                    this.mouse.x = null;
-                    this.mouse.y = null;
-                });
-                window.addEventListener('touchend', () => {
-                    this.mouse.x = null;
-                    this.mouse.y = null;
-                });
-            }
-
-            animate() {
-                // Fill background (clears previous frame and handles optimization)
-                this.ctx.fillStyle = '#030504';
-                this.ctx.fillRect(0, 0, this.width, this.height);
-
-                // Update and Draw Particles
-                for (let i = 0; i < this.particles.length; i++) {
-                    this.particles[i].update(this.width, this.height, this.mouse.x, this.mouse.y);
-                    this.particles[i].draw(this.ctx);
-
-                    // Draw Connections
-                    for (let j = i + 1; j < this.particles.length; j++) {
-                        const dx = this.particles[i].x - this.particles[j].x;
-                        const dy = this.particles[i].y - this.particles[j].y;
-                        const distance = Math.sqrt(dx * dx + dy * dy);
-
-                        if (distance < this.connectionDistance) {
-                            const opacity = 1 - (distance / this.connectionDistance);
-                            this.ctx.beginPath();
-                            this.ctx.strokeStyle = `rgba(74, 222, 128, ${opacity * 0.2})`;
-                            this.ctx.lineWidth = 0.5;
-                            this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
-                            this.ctx.lineTo(this.particles[j].x, this.particles[j].y);
-                            this.ctx.stroke();
-                        }
-                    }
-                }
-
-                requestAnimationFrame(() => this.animate());
-            }
-        }
-
-        /**
-         * =====================================================================
-         * MODULE 4: CINEMATIC SEQUENCER
-         * Controls the pacing, fading, and state of the HTML elements.
-         * =====================================================================
-         */
-        class CinematicExperience {
-            constructor() {
-                // Define the sequence timeline
-                this.timeline = [
-                    { id: 'step-plant', duration: 4500 }, // Draw plant SVG
-                    { id: 'step-1', duration: 4500 },     // "If you're seeing this..."
-                    { id: 'step-2', duration: 4500 },     // "Before you leave..."
-                    { id: 'step-3', duration: 16000 },    // Long core message (staggered CSS fades)
-                    { id: 'step-final', duration: -1 }    // Dashboard (Infinite duration)
-                ];
-                
-                this.currentIndex = 0;
-                this.isRunning = false;
-            }
-
-            async start() {
-                if (this.isRunning) return;
-                this.isRunning = true;
-                
-                // Initial dramatic pause before anything happens
-                await Utils.sleep(1500);
-                
-                this.processNextStep();
-            }
-
-            async processNextStep() {
-                if (this.currentIndex >= this.timeline.length) {
-                    this.endSequence();
-                    return;
-                }
-
-                const currentStepData = this.timeline[this.currentIndex];
-                const element = document.getElementById(currentStepData.id);
-
-                if (!element) {
-                    console.error(`Element ID ${currentStepData.id} not found.`);
-                    this.currentIndex++;
-                    this.processNextStep();
-                    return;
-                }
-
-                // 1. Activate Element (Triggers CSS transitions & animations)
-                element.classList.add('active');
-
-                // 2. Handle Duration & Transition Out
-                if (currentStepData.duration !== -1) {
-                    // Wait for the assigned reading time
-                    await Utils.sleep(currentStepData.duration);
-                    
-                    // Deactivate Element (Triggers CSS fade out)
-                    element.classList.remove('active');
-                    
-                    // Wait for the fade out transition to complete before starting next
-                    // Matches the 2.5s transition-duration in CSS
-                    await Utils.sleep(2500); 
-                    
-                    this.currentIndex++;
-                    this.processNextStep();
-                } else {
-                    // -1 means infinite (final step), stop the sequencer loop
-                    this.endSequence();
-                }
-            }
-
-            endSequence() {
-                // Restore scrolling for the dashboard view
-                document.body.style.overflowY = 'auto';
-                // Slightly dim the particles to bring focus to content
-                document.getElementById('particle-canvas').style.opacity = '0.3';
-            }
-        }
-
-        /**
-         * =====================================================================
-         * APPLICATION BOOTSTRAP
-         * Initialize all modules once the DOM is fully parsed and loaded.
-         * =====================================================================
-         */
-        document.addEventListener('DOMContentLoaded', () => {
-            // 1. Initialize ambient visual background
-            const particleNet = new ParticleNetwork();
+      const counterObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const counter = entry.target;
+            const target = +counter.getAttribute('data-target');
             
-            // 2. Setup Audio Engine (requires user interaction to play)
-            const audioEnv = new AudioEnvironment();
+            const updateCount = () => {
+              const count = +counter.innerText;
+              const inc = target / speed;
+
+              if (count < target) {
+                counter.innerText = Math.ceil(count + inc);
+                setTimeout(updateCount, 20);
+              } else {
+                counter.innerText = target;
+              }
+            };
             
-            // 3. Start the cinematic story sequence
-            const experience = new CinematicExperience();
-            experience.start();
-            
-            // Log for debugging
-            console.log("🌱 Aloe Rauhii Farewell Experience Initialized.");
+            updateCount();
+            observer.unobserve(counter); // Only run once
+          }
         });
+      }, observerOptions);
 
-    </script>
+      counters.forEach(counter => {
+        counterObserver.observe(counter);
+      });
+
+    });
+  </script>
 </body>
 </html>
