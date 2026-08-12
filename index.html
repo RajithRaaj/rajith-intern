@@ -1,501 +1,978 @@
 <!DOCTYPE html>
-<html lang="en" class="antialiased">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>The Architecture of Growth | Rajith Raaj</title>
+    <title>For You 🌱 | An Internship Farewell</title>
     
-    <!-- CDNs -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="https://unpkg.com/@studio-freight/lenis@1.0.32/dist/lenis.min.js"></script>
+    <!-- 
+      ======================================================================
+      PROJECT: ALOE RAUHII CINEMATIC FAREWELL
+      AUTHOR: Rajith
+      DESCRIPTION: A single-file, zero-dependency interactive cinematic 
+                   experience for a physical plant gifting event.
+      ======================================================================
+    -->
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;700;900&family=JetBrains+Mono:wght@100;400&display=swap');
-
+        /* =====================================================================
+           CSS CUSTOM PROPERTIES & VARIABLES
+           ===================================================================== */
         :root {
-            --bg: #020202;
-            --primary: #00f0ff;
-            --secondary: #7000ff;
-            --surface: rgba(255, 255, 255, 0.02);
-            --border: rgba(255, 255, 255, 0.05);
+            /* Core Colors */
+            --bg-base: #030504;
+            --bg-surface: #0a110c;
+            --bg-surface-light: #131f16;
+            
+            /* Typography Colors */
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --text-tertiary: #64748b;
+            
+            /* Brand / Accent Colors */
+            --accent-green-light: #86efac;
+            --accent-green-main: #4ade80;
+            --accent-green-dark: #22c55e;
+            --accent-glow: rgba(74, 222, 128, 0.15);
+            --accent-glow-strong: rgba(74, 222, 128, 0.4);
+            
+            /* Typography Families */
+            --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --font-serif: 'Georgia', 'Times New Roman', Times, serif;
+            --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            
+            /* Animation Timings */
+            --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+            --ease-in-out-sine: cubic-bezier(0.445, 0.05, 0.55, 0.95);
+            --transition-slow: 2s var(--ease-in-out-sine);
+            --transition-medium: 0.8s var(--ease-out-expo);
+            --transition-fast: 0.3s ease;
+            
+            /* Spacing Metrics */
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 2rem;
+            --spacing-lg: 4rem;
+            --spacing-xl: 8rem;
+            
+            /* Z-Index Layers */
+            --z-canvas: 0;
+            --z-background: 10;
+            --z-content: 20;
+            --z-overlay: 30;
+            --z-ui: 40;
         }
 
-        * { cursor: none !important; /* Custom cursor */ }
-        
-        body, html {
-            margin: 0; padding: 0; background-color: var(--bg); color: #ffffff;
-            font-family: 'Outfit', sans-serif; overflow-x: hidden;
-            overscroll-behavior: none;
+        /* =====================================================================
+           GLOBAL RESET & BASE STYLES
+           ===================================================================== */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        /* Custom Magnetic Cursor */
-        #cursor-dot, #cursor-ring {
-            position: fixed; top: 0; left: 0; transform: translate(-50%, -50%);
-            border-radius: 50%; z-index: 9999; pointer-events: none;
-        }
-        #cursor-dot { width: 8px; height: 8px; background-color: var(--primary); }
-        #cursor-ring { 
-            width: 40px; height: 40px; border: 1px solid rgba(0, 240, 255, 0.5); 
-            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* WebGL Background */
-        #webgl-canvas {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: 0; pointer-events: auto;
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            overflow-x: hidden;
+            width: 100vw;
+            height: 100vh;
+            /* Prevents scroll during the intro sequence */
+            overflow-y: hidden;
+            position: relative;
         }
 
-        /* Ambient Glow that follows scroll */
-        #ambient-glow {
-            position: fixed; width: 60vw; height: 60vw; border-radius: 50%;
-            background: radial-gradient(circle, rgba(112,0,255,0.15) 0%, rgba(0,240,255,0.05) 50%, rgba(0,0,0,0) 70%);
-            top: 50%; left: 50%; transform: translate(-50%, -50%);
-            z-index: 1; pointer-events: none; filter: blur(80px);
+        ::selection {
+            background-color: var(--accent-green-dark);
+            color: var(--bg-base);
         }
 
-        /* Typography */
-        .font-mono { font-family: 'JetBrains Mono', monospace; }
-        .text-gradient {
-            background: linear-gradient(to right, var(--primary), #a255ff);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        /* =====================================================================
+           CANVAS & BACKGROUND EFFECTS
+           ===================================================================== */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: var(--z-canvas);
+            pointer-events: none; /* Let clicks pass through to UI */
+            opacity: 0.6;
+            transition: opacity var(--transition-slow);
         }
-        
-        /* Glass UI */
-        .glass-panel {
-            background: var(--surface); backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px); border: 1px solid var(--border);
-            border-radius: 24px; position: relative; overflow: hidden;
-        }
-        
-        /* Subtle inner glow on hover */
-        .glass-panel::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent);
-            transform: skewX(-25deg); transition: 0.5s;
-        }
-        .glass-panel:hover::before { left: 200%; }
 
-        /* Loader */
-        #loader {
-            position: fixed; inset: 0; background: var(--bg); z-index: 10000;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        .ambient-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(20, 35, 25, 0.4) 0%, var(--bg-base) 80%);
+            z-index: var(--z-background);
+            pointer-events: none;
         }
-        .progress-bar { width: 200px; height: 1px; background: rgba(255,255,255,0.1); margin-top: 20px; position: relative; overflow: hidden; }
-        .progress-fill { position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: var(--primary); }
+
+        /* =====================================================================
+           AUDIO CONTROLS UI
+           ===================================================================== */
+        .audio-toggle-btn {
+            position: fixed;
+            bottom: var(--spacing-md);
+            right: var(--spacing-md);
+            z-index: var(--z-ui);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: all var(--transition-fast);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: floatIn 2s ease forwards 5s; /* Appears after 5 seconds */
+        }
+
+        .audio-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--accent-green-main);
+            border-color: var(--accent-green-dark);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .audio-toggle-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+            transition: fill var(--transition-fast);
+        }
+
+        .audio-toggle-btn.playing {
+            color: var(--accent-green-light);
+            border-color: var(--accent-green-main);
+            box-shadow: 0 0 20px var(--accent-glow-strong);
+            animation: pulseGlow 4s infinite alternate;
+        }
+
+        /* =====================================================================
+           CINEMATIC SEQUENCER LAYOUT
+           ===================================================================== */
+        #sequence-container {
+            position: relative;
+            z-index: var(--z-content);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sequence-step {
+            position: absolute;
+            width: 90%;
+            max-width: 800px;
+            text-align: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 2.5s var(--ease-in-out-sine), 
+                        transform 2.5s var(--ease-out-expo);
+            transform: translateY(20px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sequence-step.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        /* =====================================================================
+           TYPOGRAPHY & TEXT STYLES
+           ===================================================================== */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 300;
+            line-height: 1.4;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .text-step h2 {
+            font-family: var(--font-serif);
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            color: var(--text-primary);
+            letter-spacing: 0.5px;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+
+        .text-step p {
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            line-height: 2;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-xs);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .text-step .highlight {
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            margin-top: var(--spacing-md);
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .text-step .signature {
+            margin-top: var(--spacing-lg);
+            font-style: italic;
+            color: var(--accent-green-main);
+            font-family: var(--font-serif);
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+
+        .final-quote {
+            font-family: var(--font-serif);
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: normal;
+            line-height: 1.3;
+            margin-bottom: var(--spacing-xl);
+            color: var(--text-primary);
+            text-shadow: 0 0 30px rgba(255,255,255,0.1);
+        }
+
+        /* =====================================================================
+           SVG PLANT DRAWING ANIMATION
+           ===================================================================== */
+        .glowing-aloe-container {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto var(--spacing-md);
+            position: relative;
+            filter: drop-shadow(0 0 25px var(--accent-glow));
+        }
+
+        .aloe-svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        .aloe-leaf {
+            fill: none;
+            stroke: var(--accent-green-main);
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            /* Prepare for drawing animation */
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+        }
+
+        /* Unique animation delays for each leaf to simulate organic growth */
+        .active .draw-anim-1 { animation: drawLeaf 3s var(--ease-in-out-sine) forwards 0.2s; }
+        .active .draw-anim-2 { animation: drawLeaf 3s var(--ease-in-out-sine) forwards 0.6s; }
+        .active .draw-anim-3 { animation: drawLeaf 3s var(--ease-in-out-sine) forwards 1.0s; }
+        .active .draw-anim-4 { animation: drawLeaf 3s var(--ease-in-out-sine) forwards 1.4s; }
+        .active .draw-anim-5 { animation: drawLeaf 3s var(--ease-in-out-sine) forwards 1.8s; }
+        .active .draw-anim-6 { animation: drawLeaf 3s var(--ease-in-out-sine) forwards 2.2s; }
+
+        @keyframes drawLeaf {
+            0% { stroke-dashoffset: 1000; opacity: 0; }
+            10% { opacity: 1; }
+            100% { stroke-dashoffset: 0; opacity: 1; fill: rgba(74, 222, 128, 0.05); }
+        }
+
+        /* =====================================================================
+           DASHBOARD & CARE GUIDE (FINAL STEP)
+           ===================================================================== */
+        .dashboard-step {
+            /* Override position for the final step to allow scrolling */
+            position: relative;
+            height: auto;
+            min-height: 100vh;
+            padding: var(--spacing-xl) 0;
+            justify-content: flex-start;
+        }
+
+        .care-guide-container {
+            background: rgba(10, 17, 12, 0.6);
+            border: 1px solid rgba(74, 222, 128, 0.15);
+            border-radius: 16px;
+            padding: var(--spacing-lg);
+            width: 100%;
+            max-width: 800px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.05);
+            transform: translateY(30px);
+            opacity: 0;
+            transition: all 1.5s var(--ease-out-expo);
+        }
+
+        .active .care-guide-container {
+            transform: translateY(0);
+            opacity: 1;
+            transition-delay: 1s; /* Wait for quote to appear */
+        }
+
+        .care-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: var(--spacing-lg);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: var(--spacing-md);
+        }
+
+        .care-header h3 {
+            color: var(--accent-green-main);
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        .care-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-md);
+        }
+
+        .care-card {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            padding: var(--spacing-md);
+            text-align: left;
+            transition: transform var(--transition-fast), background var(--transition-fast);
+            border: 1px solid transparent;
+        }
+
+        .care-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(74, 222, 128, 0.2);
+        }
+
+        .care-icon {
+            font-size: 2rem;
+            margin-bottom: var(--spacing-sm);
+            display: inline-block;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        }
+
+        .care-card h4 {
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            margin-bottom: var(--spacing-xs);
+            font-weight: 500;
+        }
+
+        .care-card p {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        /* =====================================================================
+           STAGGERED FADE-IN UTILITIES
+           ===================================================================== */
+        .fade-delay-1 { opacity: 0; transition: opacity 2s ease 0.5s; }
+        .fade-delay-2 { opacity: 0; transition: opacity 2s ease 2.5s; }
+        .fade-delay-3 { opacity: 0; transition: opacity 2s ease 4.5s; }
+        .fade-delay-4 { opacity: 0; transition: opacity 2s ease 6.5s; }
+        .fade-delay-5 { opacity: 0; transition: opacity 2s ease 8.5s; }
+        .fade-delay-6 { opacity: 0; transition: opacity 2s ease 10.5s; }
+        .fade-delay-7 { opacity: 0; transition: opacity 2s ease 12.5s; }
+
+        .active .fade-delay-1,
+        .active .fade-delay-2,
+        .active .fade-delay-3,
+        .active .fade-delay-4,
+        .active .fade-delay-5,
+        .active .fade-delay-6,
+        .active .fade-delay-7 {
+            opacity: 1;
+        }
+
+        /* =====================================================================
+           KEYFRAME ANIMATIONS
+           ===================================================================== */
+        @keyframes floatIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 10px rgba(74, 222, 128, 0.2); }
+            100% { box-shadow: 0 0 25px rgba(74, 222, 128, 0.6); }
+        }
+
+        @keyframes subtleDrift {
+            0% { transform: translate(0px, 0px) rotate(0deg); }
+            50% { transform: translate(5px, 10px) rotate(1deg); }
+            100% { transform: translate(0px, 0px) rotate(0deg); }
+        }
+
+        /* Apply subtle continuous drift to the plant svg once drawn */
+        .active .aloe-svg {
+            animation: subtleDrift 10s ease-in-out infinite alternate 4s;
+        }
+
+        /* =====================================================================
+           MEDIA QUERIES (RESPONSIVENESS)
+           ===================================================================== */
+        @media (max-width: 768px) {
+            :root {
+                --spacing-lg: 2.5rem;
+                --spacing-xl: 4rem;
+            }
+            .glowing-aloe-container {
+                width: 150px;
+                height: 150px;
+            }
+            .care-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+            .aloe-leaf {
+                stroke-dashoffset: 0;
+                opacity: 1;
+                fill: rgba(74, 222, 128, 0.05);
+            }
+        }
     </style>
 </head>
 <body>
 
-    <!-- Custom Cursor -->
-    <div id="cursor-dot"></div>
-    <div id="cursor-ring"></div>
+    <!-- =======================================================================
+         BACKGROUND ELEMENTS
+         ======================================================================= -->
+    <div class="ambient-gradient"></div>
+    <canvas id="particle-canvas"></canvas>
 
-    <!-- Preloader -->
-    <div id="loader">
-        <div class="font-mono text-xs tracking-[0.5em] text-gray-500 uppercase" id="loader-text">Compiling Experience</div>
-        <div class="progress-bar"><div class="progress-fill" id="loader-fill"></div></div>
+    <!-- =======================================================================
+         AUDIO CONTROLS
+         ======================================================================= -->
+    <button id="audio-toggle" class="audio-toggle-btn" aria-label="Toggle ambient sound">
+        <!-- Play Icon (SVG) -->
+        <svg viewBox="0 0 24 24" class="icon-play">
+            <path d="M8 5v14l11-7z"/>
+        </svg>
+    </button>
+
+    <!-- =======================================================================
+         CINEMATIC SEQUENCE CONTAINER
+         ======================================================================= -->
+    <div id="sequence-container">
+        
+        <!-- ==========================================
+             STEP 0: THE PLANT REVEAL
+             ========================================== -->
+        <div id="step-plant" class="sequence-step">
+            <div class="glowing-aloe-container">
+                <!-- Highly detailed SVG representation of an Aloe plant -->
+                <svg viewBox="0 0 200 200" class="aloe-svg" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Base Pot/Shadow -->
+                    <ellipse cx="100" cy="180" rx="40" ry="10" fill="rgba(0,0,0,0.5)" filter="blur(4px)"/>
+                    
+                    <!-- Center/Back Leaves -->
+                    <path d="M100 170 Q105 100 100 30 Q90 90 100 170" class="aloe-leaf draw-anim-1"/>
+                    
+                    <!-- Mid-layer Leaves -->
+                    <path d="M100 170 Q130 110 150 50 Q110 110 100 170" class="aloe-leaf draw-anim-2"/>
+                    <path d="M100 170 Q70 110 50 50 Q90 110 100 170" class="aloe-leaf draw-anim-3"/>
+                    
+                    <!-- Foreground Leaves (Curving out and down) -->
+                    <path d="M100 170 Q150 140 180 100 Q130 150 100 170" class="aloe-leaf draw-anim-4"/>
+                    <path d="M100 170 Q50 140 20 100 Q70 150 100 170" class="aloe-leaf draw-anim-5"/>
+                    
+                    <!-- Small emerging central leaf -->
+                    <path d="M100 170 Q110 140 105 100 Q95 140 100 170" class="aloe-leaf draw-anim-6"/>
+                </svg>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             STEP 1: FIRST REALIZATION
+             ========================================== -->
+        <div id="step-1" class="sequence-step text-step">
+            <h2>If you're seeing this, you just scanned the little plant I gave you.</h2>
+        </div>
+
+        <!-- ==========================================
+             STEP 2: THE SETUP
+             ========================================== -->
+        <div id="step-2" class="sequence-step text-step">
+            <h2>Before you leave this page, I want you to know...</h2>
+        </div>
+
+        <!-- ==========================================
+             STEP 3: THE CORE FAREWELL MESSAGE
+             ========================================== -->
+        <div id="step-3" class="sequence-step text-step">
+            <p class="fade-delay-1">This plant is small.</p>
+            <p class="fade-delay-2">But I hope it reminds you of something bigger.</p>
+            <br>
+            <p class="fade-delay-3">Thank you for being part of my internship journey.</p>
+            <br>
+            <p class="fade-delay-4">Some people become memories because of big moments.</p>
+            <p class="fade-delay-5">Others become memories simply because they were there.</p>
+            <p class="fade-delay-6 highlight">I'm glad you were there.</p>
+            <p class="fade-delay-7 signature">— Rajith</p>
+        </div>
+
+        <!-- ==========================================
+             STEP 4: FINAL DASHBOARD / CARE GUIDE
+             ========================================== -->
+        <div id="step-final" class="sequence-step dashboard-step">
+            <h1 class="final-quote fade-delay-1">The internship ended.<br>The memories don't have to.</h1>
+            
+            <div class="care-guide-container fade-delay-3">
+                <div class="care-header">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-green-main);">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                    <h3>Aloe Rauhii Care</h3>
+                </div>
+                
+                <div class="care-grid">
+                    <!-- Light Care -->
+                    <div class="care-card">
+                        <span class="care-icon">☀️</span>
+                        <h4>Sunlight</h4>
+                        <p>Prefers bright, indirect light. A windowsill with morning sun is the perfect spot. Avoid harsh, direct afternoon sun which can scorch its delicate leaves.</p>
+                    </div>
+                    
+                    <!-- Water Care -->
+                    <div class="care-card">
+                        <span class="care-icon">💧</span>
+                        <h4>Watering</h4>
+                        <p>Allow the soil to dry completely out between waterings. When you do water, soak it thoroughly until water runs out the bottom. Less is more.</p>
+                    </div>
+                    
+                    <!-- Soil/Potting Care -->
+                    <div class="care-card">
+                        <span class="care-icon">🪴</span>
+                        <h4>Soil & Potting</h4>
+                        <p>Needs excellent drainage. A cactus or succulent soil mix is ideal. Only repot when it outgrows its current container, usually every 2-3 years.</p>
+                    </div>
+                    
+                    <!-- Temperature Care -->
+                    <div class="care-card">
+                        <span class="care-icon">🌡️</span>
+                        <h4>Environment</h4>
+                        <p>Thrives in standard indoor room temperatures (65°F - 80°F). Keep away from cold drafts or AC vents. It does not require high humidity.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- 3D Canvas & Ambient Lighting -->
-    <canvas id="webgl-canvas"></canvas>
-    <div id="ambient-glow"></div>
-
-    <!-- Main Content -->
-    <main id="smooth-wrapper" class="w-full relative z-10 pointer-events-none">
-
-        <!-- HERO SECTION -->
-        <section class="h-[120vh] flex flex-col justify-center items-center text-center px-4 relative">
-            <div class="hero-content flex flex-col items-center">
-                <div class="px-4 py-1 border border-white/10 rounded-full mb-8 font-mono text-xs tracking-widest text-blue-400 bg-white/5 backdrop-blur-md opacity-0 hero-elem">
-                    SYSTEM STATUS: DEPARTURE
-                </div>
-                
-                <h1 class="text-6xl md:text-[8rem] font-black tracking-tighter leading-none mb-6 opacity-0 hero-elem">
-                    THEORY TO<br><span class="text-gradient">REALITY.</span>
-                </h1>
-                
-                <p class="text-lg md:text-2xl font-light text-gray-400 max-w-2xl opacity-0 hero-elem mt-4">
-                    Bridging the gap between academic AI/ML environments and massive-scale engineering operations.
-                </p>
-            </div>
-            
-            <div class="absolute bottom-32 flex flex-col items-center opacity-0 hero-elem">
-                <span class="font-mono text-xs tracking-widest text-gray-600 mb-4 uppercase">Initialize Scroll</span>
-                <div class="w-[1px] h-20 bg-gradient-to-b from-[var(--primary)] to-transparent"></div>
-            </div>
-        </section>
-
-        <!-- HORIZONTAL TEXT MARQUEE -->
-        <section class="py-10 border-y border-white/5 bg-black/20 backdrop-blur-md overflow-hidden relative z-10 pointer-events-auto flex">
-            <div class="marquee flex whitespace-nowrap opacity-50 font-mono text-sm tracking-widest text-gray-400">
-                <span class="mx-8">NEURAL NETWORKS</span> • <span class="mx-8">R&D OPERATIONS</span> • 
-                <span class="mx-8">ENTERPRISE ARCHITECTURE</span> • <span class="mx-8">PREDICTIVE MODELING</span> • 
-                <span class="mx-8">LEGACY SYSTEMS</span> • <span class="mx-8">AI/ML INTEGRATION</span> • 
-                <span class="mx-8">NEURAL NETWORKS</span> • <span class="mx-8">R&D OPERATIONS</span> • 
-                <span class="mx-8">ENTERPRISE ARCHITECTURE</span> • <span class="mx-8">PREDICTIVE MODELING</span> •
-            </div>
-        </section>
-
-        <!-- BENTO BOX GRID -->
-        <section class="min-h-screen py-32 px-6 md:px-12 max-w-[1400px] mx-auto relative pointer-events-auto">
-            <h2 class="text-4xl md:text-6xl font-bold mb-16 section-title opacity-0">What I Actually Learned</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 auto-rows-[300px]">
-                
-                <!-- Box 1: Scale -->
-                <div class="glass-panel p-8 md:col-span-2 md:row-span-2 flex flex-col justify-between bento-card opacity-0 group hover-magnetic">
-                    <div class="flex justify-between items-start">
-                        <div class="font-mono text-sm text-[var(--primary)]">01 // SCALE</div>
-                        <div class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            ↗
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="text-4xl font-bold mb-4 leading-tight">From Vercel<br>to Enterprise.</h3>
-                        <p class="text-gray-400 text-lg leading-relaxed">
-                            Building isolated full-stack apps is incredible for speed. But integrating algorithms into massive R&D operations requires a completely different mindset. It’s not just about if the code works; it’s about how it survives in an ecosystem of thousands of moving parts.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Box 2: Imposter Syndrome -->
-                <div class="glass-panel p-8 md:col-span-2 flex flex-col justify-between bento-card opacity-0 bg-gradient-to-br from-indigo-900/10 to-transparent">
-                    <div class="font-mono text-sm text-[#a255ff]">02 // THE CURVE</div>
-                    <div>
-                        <h3 class="text-2xl font-bold mb-2">The Imposter Curve</h3>
-                        <div class="w-full h-[2px] bg-white/10 mt-6 relative">
-                            <div class="absolute left-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-red-500 rounded-full"></div>
-                            <div class="absolute left-1/2 top-1/2 -translate-y-1/2 w-3 h-3 bg-yellow-500 rounded-full"></div>
-                            <div class="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-green-500 rounded-full"></div>
-                        </div>
-                        <div class="flex justify-between text-xs font-mono text-gray-500 mt-4">
-                            <span>Day 1:<br>Panic</span>
-                            <span class="text-center">Week 6:<br>False Confidence</span>
-                            <span class="text-right">End:<br>Comfortable<br>Ignorance</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Box 3: Humans -->
-                <div class="glass-panel p-8 flex flex-col justify-between bento-card opacity-0">
-                    <div class="font-mono text-sm text-gray-400">03 // NETWORK</div>
-                    <div>
-                        <h3 class="text-xl font-bold mb-2">Coffee > Code</h3>
-                        <p class="text-gray-400 text-sm">
-                            The most complex bugs weren't solved in the IDE. They were solved during five-minute conversations in the breakroom. Engineering is a team sport.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Box 4: Execution -->
-                <div class="glass-panel p-8 flex flex-col justify-between bento-card opacity-0">
-                    <div class="font-mono text-sm text-gray-400">04 // DATA</div>
-                    <div>
-                        <h3 class="text-xl font-bold mb-2">Clean Data Myth</h3>
-                        <p class="text-gray-400 text-sm">
-                            College datasets are pristine. Real-world R&D data is chaos. 80% of AI is just trying to format the data so the model doesn't crash.
-                        </p>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- FOOTER / FAREWELL -->
-        <section class="h-screen flex flex-col items-center justify-center text-center relative z-10 pointer-events-auto px-4 pb-20">
-            <div class="glass-panel px-12 py-16 max-w-3xl flex flex-col items-center bento-card opacity-0">
-                <h2 class="text-4xl md:text-5xl font-bold mb-6">Signing Off.</h2>
-                <p class="text-gray-400 text-lg mb-10 max-w-xl">
-                    To the mentors, the engineers, and everyone who answered my endless questions—thank you. I'm leaving behind lines of code, some trained models, and 15 Snowflake Aloes. Take care of them.
-                </p>
-                
-                <div class="hover-magnetic inline-block">
-                    <div class="px-10 py-4 bg-white text-black font-bold rounded-full font-mono tracking-widest text-sm hover:bg-[var(--primary)] transition-colors duration-300">
-                        RAJITH RAAJ
-                    </div>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
+    <!-- =======================================================================
+         JAVASCRIPT APPLICATION LOGIC
+         ======================================================================= -->
     <script>
-        // ==========================================
-        // 1. CUSTOM MAGNETIC CURSOR
-        // ==========================================
-        const cursorDot = document.getElementById('cursor-dot');
-        const cursorRing = document.getElementById('cursor-ring');
-        let mouseX = window.innerWidth / 2;
-        let mouseY = window.innerHeight / 2;
-        let ringX = mouseX;
-        let ringY = mouseY;
+        /**
+         * =====================================================================
+         * MODULE 1: UTILITIES
+         * =====================================================================
+         */
+        const Utils = {
+            /**
+             * Promisified setTimeout for async/await sequencing
+             * @param {number} ms - Milliseconds to sleep
+             * @returns {Promise<void>}
+             */
+            sleep: (ms) => new Promise(resolve => setTimeout(resolve, ms)),
 
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-            cursorDot.style.left = mouseX + 'px';
-            cursorDot.style.top = mouseY + 'px';
-        });
+            /**
+             * Generates a random number between min and max
+             */
+            randomRange: (min, max) => Math.random() * (max - min) + min,
 
-        // Smooth follow for the ring
-        function renderCursor() {
-            ringX += (mouseX - ringX) * 0.15;
-            ringY += (mouseY - ringY) * 0.15;
-            cursorRing.style.left = ringX + 'px';
-            cursorRing.style.top = ringY + 'px';
-            requestAnimationFrame(renderCursor);
-        }
-        requestAnimationFrame(renderCursor);
-
-        // Magnetic hover effect
-        document.querySelectorAll('.hover-magnetic').forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                cursorRing.style.width = '80px';
-                cursorRing.style.height = '80px';
-                cursorRing.style.backgroundColor = 'rgba(0, 240, 255, 0.1)';
-            });
-            el.addEventListener('mouseleave', () => {
-                cursorRing.style.width = '40px';
-                cursorRing.style.height = '40px';
-                cursorRing.style.backgroundColor = 'transparent';
-                cursorRing.style.transform = 'translate(-50%, -50%)';
-            });
-            el.addEventListener('mousemove', (e) => {
-                const rect = el.getBoundingClientRect();
-                const x = e.clientX - rect.left - rect.width / 2;
-                const y = e.clientY - rect.top - rect.height / 2;
-                el.style.transform = `translate(${x * 0.1}px, ${y * 0.1}px)`;
-            });
-        });
-
-        // ==========================================
-        // 2. PRELOADER & GSAP INITIALIZATION
-        // ==========================================
-        gsap.registerPlugin(ScrollTrigger);
-
-        let progress = 0;
-        const fill = document.getElementById('loader-fill');
-        const text = document.getElementById('loader-text');
-        
-        const int = setInterval(() => {
-            progress += Math.random() * 15;
-            if (progress > 100) progress = 100;
-            fill.style.width = progress + '%';
-            
-            if (progress === 100) {
-                clearInterval(int);
-                setTimeout(() => {
-                    gsap.to('#loader', { yPercent: -100, duration: 1, ease: 'power4.inOut' });
-                    initHeroAnimation();
-                }, 500);
+            /**
+             * Maps a number from one range to another
+             */
+            mapRange: (value, inMin, inMax, outMin, outMax) => {
+                return (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
             }
-        }, 100);
+        };
 
-        function initHeroAnimation() {
-            gsap.to('.hero-elem', {
-                y: 0, opacity: 1, duration: 1.5, stagger: 0.2,
-                ease: 'power4.out', transform: 'translateY(0)'
-            });
-        }
-
-        // ==========================================
-        // 3. LENIS SMOOTH SCROLL
-        // ==========================================
-        const lenis = new Lenis({
-            duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            smooth: true,
-        });
-        lenis.on('scroll', ScrollTrigger.update);
-        gsap.ticker.add((time) => { lenis.raf(time * 1000); });
-        gsap.ticker.lagSmoothing(0);
-
-        // ==========================================
-        // 4. GSAP SCROLL ANIMATIONS
-        // ==========================================
-        // Marquee
-        gsap.to('.marquee', {
-            xPercent: -50, ease: 'none',
-            scrollTrigger: { trigger: '.marquee', start: 'top bottom', end: 'bottom top', scrub: 1 }
-        });
-
-        // Bento Box Reveal
-        gsap.to('.section-title', {
-            opacity: 1, y: 0, duration: 1,
-            scrollTrigger: { trigger: '.section-title', start: 'top 80%' }
-        });
-
-        gsap.utils.toArray('.bento-card').forEach((card, i) => {
-            gsap.fromTo(card, 
-                { opacity: 0, y: 100, rotateX: 10 },
-                {
-                    opacity: 1, y: 0, rotateX: 0, duration: 1.2,
-                    ease: 'power3.out',
-                    scrollTrigger: { trigger: card, start: 'top 85%' }
-                }
-            );
-        });
-
-        // Ambient glow parallax
-        window.addEventListener('scroll', () => {
-            const scroll = window.scrollY;
-            document.getElementById('ambient-glow').style.transform = `translate(-50%, calc(-50% + ${scroll * 0.5}px))`;
-        });
-
-        // ==========================================
-        // 5. ADVANCED THREE.JS PARTICLE CORE
-        // ==========================================
-        const canvas = document.querySelector('#webgl-canvas');
-        const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x020202, 0.05);
-
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-        camera.position.z = 20;
-
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        renderer.setClearColor(0x000000, 0);
-
-        // The "Data Core" Particle System
-        const particleCount = window.innerWidth < 768 ? 3000 : 8000;
-        const geometry = new THREE.BufferGeometry();
-        const positions = new Float32Array(particleCount * 3);
-        const originalPositions = new Float32Array(particleCount * 3);
-        const colors = new Float32Array(particleCount * 3);
-        const sizes = new Float32Array(particleCount);
-
-        const color1 = new THREE.Color('#00f0ff');
-        const color2 = new THREE.Color('#7000ff');
-
-        for (let i = 0; i < particleCount; i++) {
-            const i3 = i * 3;
-            // Generate points on a sphere
-            const radius = 8 + Math.random() * 4;
-            const theta = Math.random() * 2 * Math.PI;
-            const phi = Math.acos((Math.random() * 2) - 1);
-
-            const x = radius * Math.sin(phi) * Math.cos(theta);
-            const y = radius * Math.sin(phi) * Math.sin(theta);
-            const z = radius * Math.cos(phi);
-
-            positions[i3] = x;
-            positions[i3 + 1] = y;
-            positions[i3 + 2] = z;
-
-            originalPositions[i3] = x;
-            originalPositions[i3 + 1] = y;
-            originalPositions[i3 + 2] = z;
-
-            // Mix colors
-            const mixedColor = color1.clone().lerp(color2, Math.random());
-            colors[i3] = mixedColor.r;
-            colors[i3 + 1] = mixedColor.g;
-            colors[i3 + 2] = mixedColor.b;
-
-            sizes[i] = Math.random() * 2;
-        }
-
-        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-        geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
-
-        // Custom Shader Material for particles
-        const material = new THREE.ShaderMaterial({
-            uniforms: {
-                uTime: { value: 0 },
-                uMouse: { value: new THREE.Vector3(0, 0, 0) }
-            },
-            vertexShader: `
-                uniform float uTime;
-                uniform vec3 uMouse;
-                attribute float size;
-                attribute vec3 color;
-                varying vec3 vColor;
+        /**
+         * =====================================================================
+         * MODULE 2: WEB AUDIO API SYNTHESIZER (GENERATIVE AMBIENT)
+         * Creates a soft, cinematic background drone without needing MP3 files.
+         * =====================================================================
+         */
+        class AudioEnvironment {
+            constructor() {
+                this.ctx = null;
+                this.masterGain = null;
+                this.oscillators = [];
+                this.isPlaying = false;
+                this.btn = document.getElementById('audio-toggle');
                 
-                void main() {
-                    vColor = color;
-                    vec3 pos = position;
-                    
-                    // Wave distortion
-                    pos.x += sin(uTime * 0.5 + pos.y * 0.5) * 0.5;
-                    pos.y += cos(uTime * 0.3 + pos.z * 0.5) * 0.5;
-                    
-                    // Mouse repulsion logic
-                    float dist = distance(pos.xy, uMouse.xy);
-                    if(dist < 5.0) {
-                        vec3 dir = normalize(pos - vec3(uMouse.xy, 0.0));
-                        pos += dir * (5.0 - dist) * 0.5;
-                    }
+                this.bindEvents();
+            }
 
-                    vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
-                    gl_PointSize = size * (30.0 / -mvPosition.z);
-                    gl_Position = projectionMatrix * mvPosition;
+            bindEvents() {
+                this.btn.addEventListener('click', () => this.toggleAudio());
+            }
+
+            async initAudio() {
+                if (this.ctx) return;
+                
+                // Initialize Audio Context
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                this.ctx = new AudioContext();
+                
+                // Master Volume
+                this.masterGain = this.ctx.createGain();
+                this.masterGain.connect(this.ctx.destination);
+                this.masterGain.gain.value = 0; // Start muted
+
+                // Create a soft chord (Fmaj7/C vibe)
+                const frequencies = [130.81, 174.61, 220.00, 329.63]; // C3, F3, A3, E4
+                
+                frequencies.forEach(freq => {
+                    // Oscillator
+                    const osc = this.ctx.createOscillator();
+                    osc.type = 'sine';
+                    osc.frequency.value = freq;
+                    
+                    // Individual LFO for slow volume pulsing
+                    const lfo = this.ctx.createOscillator();
+                    lfo.type = 'sine';
+                    lfo.frequency.value = Utils.randomRange(0.05, 0.15); // Very slow pulse
+                    
+                    const lfoGain = this.ctx.createGain();
+                    lfoGain.gain.value = 0.5;
+                    
+                    // Route LFO to Gain
+                    lfo.connect(lfoGain.gain);
+                    
+                    // Main Gain for this oscillator
+                    const oscGain = this.ctx.createGain();
+                    oscGain.gain.value = 0.2; // Low volume per note
+                    
+                    osc.connect(oscGain);
+                    oscGain.connect(this.masterGain);
+                    
+                    // Start nodes
+                    osc.start();
+                    lfo.start();
+                    
+                    this.oscillators.push({ osc, lfo, oscGain });
+                });
+            }
+
+            async toggleAudio() {
+                if (!this.ctx) {
+                    await this.initAudio();
                 }
-            `,
-            fragmentShader: `
-                varying vec3 vColor;
-                void main() {
-                    // Make particles circular
-                    float r = 0.0;
-                    vec2 cxy = 2.0 * gl_PointCoord - 1.0;
-                    r = dot(cxy, cxy);
-                    if (r > 1.0) { discard; }
-                    
-                    gl_FragColor = vec4(vColor, 0.8 - (r * 0.5));
+
+                // Resume context if suspended (browser policy)
+                if (this.ctx.state === 'suspended') {
+                    await this.ctx.resume();
                 }
-            `,
-            transparent: true,
-            blending: THREE.AdditiveBlending,
-            depthWrite: false
-        });
 
-        const particleSystem = new THREE.Points(geometry, material);
-        scene.add(particleSystem);
-
-        // Normalize mouse coordinates for the shader (-10 to 10 approx range depending on camera)
-        let targetMouse = new THREE.Vector2(0, 0);
-        document.addEventListener('mousemove', (e) => {
-            targetMouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-            targetMouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-            
-            // Map to world space approx
-            targetMouse.x *= 15;
-            targetMouse.y *= 10;
-        });
-
-        // Animation Loop
-        const clock = new THREE.Clock();
-        function animateThree() {
-            const elapsedTime = clock.getElapsedTime();
-            
-            // Update Uniforms
-            material.uniforms.uTime.value = elapsedTime;
-            
-            // Smooth mouse follow for shader
-            material.uniforms.uMouse.value.x += (targetMouse.x - material.uniforms.uMouse.value.x) * 0.1;
-            material.uniforms.uMouse.value.y += (targetMouse.y - material.uniforms.uMouse.value.y) * 0.1;
-
-            // Rotate entire system slowly
-            particleSystem.rotation.y = elapsedTime * 0.1;
-            particleSystem.rotation.x = elapsedTime * 0.05;
-
-            // Parallax on scroll
-            camera.position.y = -(window.scrollY * 0.005);
-
-            renderer.render(scene, camera);
-            requestAnimationFrame(animateThree);
+                if (this.isPlaying) {
+                    // Fade out
+                    this.masterGain.gain.setTargetAtTime(0, this.ctx.currentTime, 1);
+                    this.btn.classList.remove('playing');
+                    this.btn.innerHTML = '<svg viewBox="0 0 24 24" class="icon-play"><path d="M8 5v14l11-7z"/></svg>';
+                } else {
+                    // Fade in
+                    this.masterGain.gain.setTargetAtTime(0.5, this.ctx.currentTime, 2);
+                    this.btn.classList.add('playing');
+                    // Pause Icon
+                    this.btn.innerHTML = '<svg viewBox="0 0 24 24" class="icon-pause"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+                }
+                
+                this.isPlaying = !this.isPlaying;
+            }
         }
-        animateThree();
 
-        // Resize handler
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+        /**
+         * =====================================================================
+         * MODULE 3: INTERACTIVE PARTICLE SYSTEM (CONSTELLATION EFFECT)
+         * Renders a highly optimized, interactive network of nodes.
+         * =====================================================================
+         */
+        class ParticleNode {
+            constructor(canvasWidth, canvasHeight) {
+                this.x = Math.random() * canvasWidth;
+                this.y = Math.random() * canvasHeight;
+                // Slower movement for cinematic feel
+                this.vx = Utils.randomRange(-0.2, 0.2);
+                this.vy = Utils.randomRange(-0.2, 0.2);
+                this.radius = Utils.randomRange(0.5, 2);
+                this.baseAlpha = Utils.randomRange(0.1, 0.5);
+            }
+
+            update(canvasWidth, canvasHeight, mouseX, mouseY) {
+                // Move
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Screen Wrap (Continuous flow instead of bouncing)
+                if (this.x < 0) this.x = canvasWidth;
+                if (this.x > canvasWidth) this.x = 0;
+                if (this.y < 0) this.y = canvasHeight;
+                if (this.y > canvasHeight) this.y = 0;
+
+                // Mouse interaction (gentle repulsion)
+                if (mouseX !== null && mouseY !== null) {
+                    const dx = mouseX - this.x;
+                    const dy = mouseY - this.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    const maxDist = 150;
+
+                    if (distance < maxDist) {
+                        const force = (maxDist - distance) / maxDist;
+                        this.x -= (dx / distance) * force * 1.5;
+                        this.y -= (dy / distance) * force * 1.5;
+                    }
+                }
+            }
+
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(74, 222, 128, ${this.baseAlpha})`;
+                ctx.fill();
+            }
+        }
+
+        class ParticleNetwork {
+            constructor() {
+                this.canvas = document.getElementById('particle-canvas');
+                this.ctx = this.canvas.getContext('2d', { alpha: false }); // Optimize performance
+                this.particles = [];
+                this.mouse = { x: null, y: null };
+                this.connectionDistance = 120;
+                
+                this.init();
+                this.bindEvents();
+                this.animate();
+            }
+
+            init() {
+                this.resize();
+                this.createParticles();
+            }
+
+            resize() {
+                this.width = window.innerWidth;
+                this.height = window.innerHeight;
+                // Handle high DPI displays for crisp rendering
+                const dpr = window.devicePixelRatio || 1;
+                this.canvas.width = this.width * dpr;
+                this.canvas.height = this.height * dpr;
+                this.ctx.scale(dpr, dpr);
+            }
+
+            createParticles() {
+                this.particles = [];
+                // Density based on screen area, capped for performance
+                const area = this.width * this.height;
+                let numParticles = Math.floor(area / 15000);
+                numParticles = Math.min(numParticles, 150); // Hard cap
+                
+                for (let i = 0; i < numParticles; i++) {
+                    this.particles.push(new ParticleNode(this.width, this.height));
+                }
+            }
+
+            bindEvents() {
+                window.addEventListener('resize', () => {
+                    this.resize();
+                    this.createParticles();
+                });
+
+                window.addEventListener('mousemove', (e) => {
+                    this.mouse.x = e.clientX;
+                    this.mouse.y = e.clientY;
+                });
+
+                // Touch support for mobile interaction
+                window.addEventListener('touchmove', (e) => {
+                    if(e.touches.length > 0) {
+                        this.mouse.x = e.touches[0].clientX;
+                        this.mouse.y = e.touches[0].clientY;
+                    }
+                }, { passive: true });
+
+                window.addEventListener('mouseout', () => {
+                    this.mouse.x = null;
+                    this.mouse.y = null;
+                });
+                window.addEventListener('touchend', () => {
+                    this.mouse.x = null;
+                    this.mouse.y = null;
+                });
+            }
+
+            animate() {
+                // Fill background (clears previous frame and handles optimization)
+                this.ctx.fillStyle = '#030504';
+                this.ctx.fillRect(0, 0, this.width, this.height);
+
+                // Update and Draw Particles
+                for (let i = 0; i < this.particles.length; i++) {
+                    this.particles[i].update(this.width, this.height, this.mouse.x, this.mouse.y);
+                    this.particles[i].draw(this.ctx);
+
+                    // Draw Connections
+                    for (let j = i + 1; j < this.particles.length; j++) {
+                        const dx = this.particles[i].x - this.particles[j].x;
+                        const dy = this.particles[i].y - this.particles[j].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+
+                        if (distance < this.connectionDistance) {
+                            const opacity = 1 - (distance / this.connectionDistance);
+                            this.ctx.beginPath();
+                            this.ctx.strokeStyle = `rgba(74, 222, 128, ${opacity * 0.2})`;
+                            this.ctx.lineWidth = 0.5;
+                            this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
+                            this.ctx.lineTo(this.particles[j].x, this.particles[j].y);
+                            this.ctx.stroke();
+                        }
+                    }
+                }
+
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+
+        /**
+         * =====================================================================
+         * MODULE 4: CINEMATIC SEQUENCER
+         * Controls the pacing, fading, and state of the HTML elements.
+         * =====================================================================
+         */
+        class CinematicExperience {
+            constructor() {
+                // Define the sequence timeline
+                this.timeline = [
+                    { id: 'step-plant', duration: 4500 }, // Draw plant SVG
+                    { id: 'step-1', duration: 4500 },     // "If you're seeing this..."
+                    { id: 'step-2', duration: 4500 },     // "Before you leave..."
+                    { id: 'step-3', duration: 16000 },    // Long core message (staggered CSS fades)
+                    { id: 'step-final', duration: -1 }    // Dashboard (Infinite duration)
+                ];
+                
+                this.currentIndex = 0;
+                this.isRunning = false;
+            }
+
+            async start() {
+                if (this.isRunning) return;
+                this.isRunning = true;
+                
+                // Initial dramatic pause before anything happens
+                await Utils.sleep(1500);
+                
+                this.processNextStep();
+            }
+
+            async processNextStep() {
+                if (this.currentIndex >= this.timeline.length) {
+                    this.endSequence();
+                    return;
+                }
+
+                const currentStepData = this.timeline[this.currentIndex];
+                const element = document.getElementById(currentStepData.id);
+
+                if (!element) {
+                    console.error(`Element ID ${currentStepData.id} not found.`);
+                    this.currentIndex++;
+                    this.processNextStep();
+                    return;
+                }
+
+                // 1. Activate Element (Triggers CSS transitions & animations)
+                element.classList.add('active');
+
+                // 2. Handle Duration & Transition Out
+                if (currentStepData.duration !== -1) {
+                    // Wait for the assigned reading time
+                    await Utils.sleep(currentStepData.duration);
+                    
+                    // Deactivate Element (Triggers CSS fade out)
+                    element.classList.remove('active');
+                    
+                    // Wait for the fade out transition to complete before starting next
+                    // Matches the 2.5s transition-duration in CSS
+                    await Utils.sleep(2500); 
+                    
+                    this.currentIndex++;
+                    this.processNextStep();
+                } else {
+                    // -1 means infinite (final step), stop the sequencer loop
+                    this.endSequence();
+                }
+            }
+
+            endSequence() {
+                // Restore scrolling for the dashboard view
+                document.body.style.overflowY = 'auto';
+                // Slightly dim the particles to bring focus to content
+                document.getElementById('particle-canvas').style.opacity = '0.3';
+            }
+        }
+
+        /**
+         * =====================================================================
+         * APPLICATION BOOTSTRAP
+         * Initialize all modules once the DOM is fully parsed and loaded.
+         * =====================================================================
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Initialize ambient visual background
+            const particleNet = new ParticleNetwork();
+            
+            // 2. Setup Audio Engine (requires user interaction to play)
+            const audioEnv = new AudioEnvironment();
+            
+            // 3. Start the cinematic story sequence
+            const experience = new CinematicExperience();
+            experience.start();
+            
+            // Log for debugging
+            console.log("🌱 Aloe Rauhii Farewell Experience Initialized.");
         });
+
     </script>
 </body>
 </html>
